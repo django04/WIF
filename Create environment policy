@@ -1,0 +1,30 @@
+meta {
+  name: 03 Create environment policy
+  type: http
+  seq: 03
+}
+
+post {
+  url: https://{{apiHost}}/iam/v1/repo/environment/{{environmentId}}/policies
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "{{policyName}}",
+    "description": "Minimum OpenPipeline ingest permissions for the WIF demo",
+    "statementQuery": "ALLOW openpipeline:metrics:ingest, openpipeline:logs:ingest, openpipeline:traces:ingest;"
+  }
+}
+
+vars:post-response {
+  policyUuid: res.body.uuid
+}
+
+tests {
+  function onResponse(request, response) {
+    expect(response.status).to.be.within(200, 299);
+    expect(response.body.uuid).to.be.a('string').and.not.empty;
+  }
+}
