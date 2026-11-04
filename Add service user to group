@@ -1,0 +1,21 @@
+meta {
+  name: 05 Add service user to group
+  type: http
+  seq: 05
+}
+
+post {
+  url: https://{{apiHost}}/iam/v1/accounts/{{accountUuid}}/users/{{serviceUserEmail}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  ["{{groupUuid}}"]
+}
+
+tests {
+  function onResponse(request, response) {
+    expect(response.status).to.be.within(200, 299);
+  }
+}
