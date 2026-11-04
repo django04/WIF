@@ -1,0 +1,31 @@
+meta {
+  name: 02 Create group
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://{{apiHost}}/iam/v1/accounts/{{accountUuid}}/groups
+  body: json
+  auth: inherit
+}
+
+body:json {
+  [
+    {
+      "name": "{{groupName}}",
+      "description": "OTel workload identity demo group"
+    }
+  ]
+}
+
+vars:post-response {
+  groupUuid: res.body[0].uuid
+}
+
+tests {
+  function onResponse(request, response) {
+    expect(response.status).to.be.within(200, 299);
+    expect(response.body[0].uuid).to.be.a('string').and.not.empty;
+  }
+}
