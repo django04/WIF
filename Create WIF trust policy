@@ -1,0 +1,31 @@
+meta {
+  name: 02 Create WIF trust policy
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://{{apiHost}}/iam/v1/accounts/{{accountUuid}}/wif/trust-policies
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "{{trustPolicyName}}",
+    "issuerUrl": "{{issuerUrl}}",
+    "audience": "{{audience}}",
+    "description": "OTel workload identity demo trust policy"
+  }
+}
+
+vars:post-response {
+  trustPolicyUuid: res.body.uuid
+}
+
+tests {
+  function onResponse(request, response) {
+    expect(response.status).to.be.within(200, 299);
+    expect(response.body.uuid).to.be.a('string').and.not.empty;
+  }
+}
