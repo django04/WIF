@@ -1,0 +1,41 @@
+meta {
+  name: 05 Create WIF mapping
+  type: http
+  seq: 05
+}
+
+post {
+  url: https://{{apiHost}}/iam/v1/accounts/{{accountUuid}}/wif/trust-policies/{{trustPolicyUuid}}/mappings
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "serviceUserUuid": "{{serviceUserUuid}}",
+    "environmentId": "{{environmentId}}",
+    "scopes": [
+      "openpipeline:metrics:ingest",
+      "openpipeline:logs:ingest",
+      "openpipeline:traces:ingest"
+    ],
+    "claimMappings": [
+      {
+        "claimName": "sub",
+        "claimValue": "{{subject}}",
+        "matchType": "EXACT"
+      }
+    ]
+  }
+}
+
+vars:post-response {
+  mappingUuid: res.body.uuid
+}
+
+tests {
+  function onResponse(request, response) {
+    expect(response.status).to.be.within(200, 299);
+    expect(response.body.uuid).to.be.a('string').and.not.empty;
+  }
+}
