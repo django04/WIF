@@ -1,0 +1,23 @@
+meta {
+  name: 04 Bind policy to group
+  type: http
+  seq: 04
+}
+
+post {
+  url: https://{{apiHost}}/iam/v1/repo/environment/{{environmentId}}/bindings/{{policyUuid}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "groups": ["{{groupUuid}}"]
+  }
+}
+
+tests {
+  function onResponse(request, response) {
+    expect(response.status).to.be.within(200, 299);
+  }
+}
